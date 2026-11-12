@@ -1,0 +1,71 @@
+spring:
+  application:
+    name: emberhall-guild
+  config:
+    import:
+      - optional:file:.env[.properties]
+      - optional:file:../.env[.properties]
+  datasource:
+    url: ${DATABASE_URL:jdbc:h2:file:./data/emberhall;MODE=PostgreSQL;AUTO_SERVER=TRUE}
+    username: ${DATABASE_USER:sa}
+    password: ${DATABASE_PASSWORD:}
+    driver-class-name: ${DATABASE_DRIVER:org.h2.Driver}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 1200ms
+  ai:
+    model:
+      chat: openai
+    openai:
+      api-key: ${GROQ_API_KEY:not-configured}
+      base-url: ${GROQ_BASE_URL:https://api.groq.com/openai/v1}
+      chat:
+        model: ${GROQ_MODEL:llama-3.3-70b-versatile}
+        temperature: 0.7
+        max-tokens: 900
+    retry:
+      max-attempts: 2
+
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: always
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:emberhall-guild-secret-key-for-local-development-please-change-in-production-42}
+    ttl-hours: 168
+  paypal:
+    client-id: ${PAYPAL_CLIENT_ID:}
+    client-secret: ${PAYPAL_CLIENT_SECRET:}
+    mode: ${PAYPAL_MODE:sandbox}
+    currency: ${PAYPAL_CURRENCY:USD}
+    fee-percent: ${PLATFORM_FEE_PERCENT:10}
+  redis:
+    enabled: ${REDIS_ENABLED:false}
+  cors:
+    origins: ${CORS_ORIGINS:http://localhost:5173,http://127.0.0.1:5173}
+  seed:
+    enabled: ${SEED_DATA:true}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  health:
+    redis:
+      enabled: ${REDIS_ENABLED:false}
